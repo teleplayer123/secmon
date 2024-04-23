@@ -12,7 +12,7 @@ class MemoryUsage:
         vmem = psutil.virtual_memory()
         vmem_stats["available_memory"] = convert_bytes(vmem.available)
         vmem_stats["total_memory"] = convert_bytes(vmem.total)
-        vmem_stats["pct_memory_used"] = convert_bytes(vmem.percent)
+        vmem_stats["pct_memory_used"] = f"{vmem.percent}%"
         vmem_stats["used_memory"] = convert_bytes(vmem.used)
         vmem_stats["free_memory"] = convert_bytes(vmem.free)
         self.mem_stats["virtual_memory"] = vmem_stats
@@ -20,3 +20,11 @@ class MemoryUsage:
         swap_mem = {}
         smem = psutil.swap_memory()
         swap_mem["total_swap_memory"] = convert_bytes(smem.total)
+        swap_mem["used_swap_memory"] = convert_bytes(smem.used)
+        swap_mem["free_swap_memory"] = convert_bytes(smem.free)
+        swap_mem["percent_used_swap_memory"] = f"{smem.percent}%"
+        swap_mem["swapped_in_from_disk_memory"] = convert_bytes(smem.sin)
+        swap_mem["swapped_out_from_disk_memory"] = convert_bytes(smem.sout)
+        self.mem_stats["swap_memory"] = swap_mem
+
+    
