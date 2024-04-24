@@ -195,7 +195,8 @@ class PEDisassembler:
         print("-"*16)
         print(self.pe.addr_of_entry_point)
 
-def main():
+
+if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(f"Usage: py {sys.argv[0]} <pefile_path>")
         sys.exit()
@@ -212,6 +213,3 @@ def main():
     p.print_section_names
     #p.print_hexdump(0xae9000, 104834, hdr_str="INITKDBG")
     #p.print_coff_symbol_table
-
-if __name__ == "__main__":
-    main()
