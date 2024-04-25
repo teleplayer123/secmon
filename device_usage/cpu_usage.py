@@ -34,7 +34,7 @@ class CpuUsage:
         cpu_mode_times = {}
         mode_times = psutil.cpu_times(percpu=True)
         n_logical_cpus = len(mode_times)
-        for i in range(1, len(n_logical_cpus)+1):
+        for i in range(n_logical_cpus):
             cpu_mode_times[f"{i}"] = {
                 "user_mode_time": f"{mode_times[i].user} secs",
                 "system_mode_time": f"{mode_times[i].system} secs",
@@ -48,7 +48,7 @@ class CpuUsage:
         cpu_util_pct = {}
         util_pct = psutil.cpu_percent(percpu=True, interval=self.interval)
         n_cpus = len(util_pct)
-        for i in range(1, len(n_cpus)+1):
+        for i in range(n_cpus):
             cpu_util_pct[f"{i}"] = f"{util_pct[i]}%"
         self.cpu_stats["cpu_utilization"] = cpu_util_pct
         self.cpu_stats["available_cpus"] = len(psutil.Process().cpu_affinity())
@@ -59,4 +59,4 @@ class CpuUsage:
             "last_15min": cpu_loads[2]
         }
         self.cpu_stats["cpu_load_avg"] = avg_cpu_load
-        
+        return self.cpu_stats

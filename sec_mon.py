@@ -7,3 +7,5 @@ class SecMon:
 
     def cpu_stats(self):
         cpu = CpuUsage()
+        cpu_stats = cpu.cpu_usage()
+        return cpu_stats
