@@ -27,4 +27,6 @@ class MemoryUsage:
         swap_mem["swapped_out_from_disk_memory"] = convert_bytes(smem.sout)
         self.mem_stats["swap_memory"] = swap_mem
 
-    
+    def disk_stats(self):
+        #general disk info
+        disk_info = {}
