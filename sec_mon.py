@@ -17,5 +17,6 @@ class SecMon:
     
     def net_stats(self, block_interval=5):
         net = NetworkUsage()
-        net_stats = net.measure_usage(block_interval=block_interval)
+        net.measure_usage(block_interval=block_interval)
+        net_stats = net.net_usage
         return net_stats
