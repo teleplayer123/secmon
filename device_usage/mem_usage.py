@@ -26,14 +26,6 @@ class MemoryUsage:
         swap_mem["percent_used_swap_memory"] = f"{smem.percent}%"
         swap_mem["swapped_in_from_disk_memory"] = convert_bytes(smem.sin)
         swap_mem["swapped_out_from_disk_memory"] = convert_bytes(smem.sout)
-<<<<<<< HEAD
         mem_stats["swap_memory"] = swap_mem
         return mem_stats
     
-=======
-        self.mem_stats["swap_memory"] = swap_mem
-
-    def disk_stats(self):
-        #general disk info
-        disk_info = {}
->>>>>>> f81d22d49763231869892fa25e4a01d0139520dc
