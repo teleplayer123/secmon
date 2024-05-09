@@ -24,4 +24,9 @@ class NetworkUsage:
             self.net_usage[iface] = {"rx": rx, "tx": tx}
 
     def network_sockets(self, sock_type="inet"):
-        nets = psutil.net_connections(kind="inet")
+        socket_info = {
+            "tcp": {},
+            "udp": {}
+        }
+        nets = psutil.net_connections(kind=sock_type)
+        
