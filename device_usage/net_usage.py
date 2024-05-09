@@ -25,8 +25,24 @@ class NetworkUsage:
 
     def network_sockets(self, sock_type="inet"):
         socket_info = {
-            "tcp": {},
-            "udp": {}
+            "tcp": [],
+            "udp": []
         }
         nets = psutil.net_connections(kind=sock_type)
-        
+        for net in nets:
+            sock_dict = {
+                    "family": net.family.name,
+                    "local_addr": net.laddr.ip,
+                    "local_port": net.laddr.port,
+                    "remote_addr": net.raddr.ip,
+                    "remote_port": net.raddr.port,
+                    "pid": net.pid,
+                    "status": net.status
+            }
+            if net.type.value == 1:
+                socket_info["tcp"].append(sock_dict)
+            elif net.type.value == 2:
+                socket_info["udp"].append(sock_dict)
+            else:
+                print("unimplemented protocol: {}: {}".format(net.type.name, net.type.value))
+                
