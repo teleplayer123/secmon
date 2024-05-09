@@ -4,10 +4,10 @@ from utils.utils import convert_bytes
 
 class CpuUsage:
 
-    def __init__(self, block_interval: int=1):
-        self.cpu_usage = self._cpu_usage(block_interval)
+    def __init__(self):
+        self.cache = {}
 
-    def _cpu_usage(self, block_interval):
+    def cpu_usage(self, block_interval=5):
         cpu_stats = {}
         stats_since_boot = {}
         boot_stats = psutil.cpu_stats()

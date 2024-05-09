@@ -1,18 +1,18 @@
 from device_usage import *
 
-class SecMon:
+class SecMonInfo:
 
     def __init__(self):
         self.device_stats = {}
 
-    def cpu_stats(self, block_interval=1):
-        cpu = CpuUsage(block_interval=block_interval)
-        cpu_stats = cpu.cpu_usage
+    def cpu_stats(self, block_interval=5):
+        cpu = CpuUsage()
+        cpu_stats = cpu.cpu_usage(block_interval=block_interval)
         return cpu_stats
     
     def mem_stats(self):
         mem = MemoryUsage()
-        mem_stats =  mem.mem_usage
+        mem_stats =  mem.mem_usage()
         return mem_stats
     
     def net_stats(self, block_interval=5):
@@ -25,3 +25,9 @@ class SecMon:
         net = NetworkUsage()
         sock_info = net.network_sockets(net_type=net_type)
         return sock_info
+    
+
+class SecMon:
+
+    def __init__(self):
+        self.sec_info = SecMonInfo()

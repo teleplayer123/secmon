@@ -4,9 +4,9 @@ from utils.utils import convert_bytes
 class MemoryUsage:
 
     def __init__(self):
-        self.mem_usage = self.memory_stats()
+        self.cache = {}
 
-    def memory_stats(self):
+    def mem_usage(self):
         mem_stats = {}
         #memory info
         vmem_stats = {}
