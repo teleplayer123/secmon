@@ -23,19 +23,25 @@ class NetworkUsage:
             tx = convert_bytes(io2[iface].bytes_sent - io1[iface].bytes_sent)
             self.net_usage[iface] = {"rx": rx, "tx": tx}
 
-    def network_sockets(self, sock_type="inet"):
+    def network_sockets(self, net_type="inet"):
         socket_info = {
             "tcp": [],
             "udp": []
         }
-        nets = psutil.net_connections(kind=sock_type)
+        nets = psutil.net_connections(kind=net_type)
         for net in nets:
+            try:
+                raddr = net.raddr.ip
+                rport = net.raddr.port
+            except AttributeError:
+                raddr = ""
+                rport = ""
             sock_dict = {
                     "family": net.family.name,
                     "local_addr": net.laddr.ip,
                     "local_port": net.laddr.port,
-                    "remote_addr": net.raddr.ip,
-                    "remote_port": net.raddr.port,
+                    "remote_addr": raddr,
+                    "remote_port": rport,
                     "pid": net.pid,
                     "status": net.status
             }
