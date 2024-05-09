@@ -46,3 +46,5 @@ class NetworkUsage:
             else:
                 print("unimplemented protocol: {}: {}".format(net.type.name, net.type.value))
                 
+        return socket_info
+                
