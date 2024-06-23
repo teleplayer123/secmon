@@ -1,4 +1,4 @@
-import ctypes as ct
+import ctypes
 import capstone as cs
 import lief
 
@@ -8,22 +8,22 @@ MAGIC_START1 = 0x9E5D5157
 MAGIC_END = 0x0AB16F30
 
 #uf2 header
-class UF2_BLOCK(ct.Structure):
+class UF2_BLOCK(ctypes.Structure):
     
     _fields_ = [
         # 32 byte header
-        ("magicStart0", ct.c_uint32),
-        ("magicStart1", ct.c_uint32),
-        ("flags", ct.c_uint32),
-        ("targetAddr", ct.c_uint32), # 4 byte aligned
-        ("payloadSize", ct.c_uint32), # 4 byte aligned
-        ("blockNo", ct.c_uint32),
-        ("numBlocks", ct.c_uint32),
-        ("fileSize", ct.c_uint32), # or familyID
+        ("magicStart0", ctypes.c_uint32),
+        ("magicStart1", ctypes.c_uint32),
+        ("flags", ctypes.c_uint32),
+        ("targetAddr", ctypes.c_uint32), # 4 byte aligned
+        ("payloadSize", ctypes.c_uint32), # 4 byte aligned
+        ("blockNo", ctypes.c_uint32),
+        ("numBlocks", ctypes.c_uint32),
+        ("fileSize", ctypes.c_uint32), # or familyID
         # if MCU page size is more than 476 bytes, bootloader should support any payload size
         # if MCU page size is less than 476 bytes, the payload should be a multiple of page size
-        ("data", ct.c_uint8*476), # data 476 bytes padded with zeros
-        ("magicEnd", ct.c_uint32)
+        ("data", ctypes.c_uint8*476), # data 476 bytes padded with zeros
+        ("magicEnd", ctypes.c_uint32)
     ]
 
 class UF2:
