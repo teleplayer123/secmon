@@ -29,7 +29,12 @@ class UF2_BLOCK(ctypes.Structure):
 class UF2:
 
     def __init__(self, filename):
-        self.filename = filename
+        self.data = self._get_data(filename)
+
+    def _get_data(self, filename):
+        with open(filename, "rb") as fh:
+            data = fh.read()
+        return data
 
     def get_flag(self, flag):
         flags = {
