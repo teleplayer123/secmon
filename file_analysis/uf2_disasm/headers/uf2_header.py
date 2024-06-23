@@ -15,12 +15,28 @@ class UF2_BLOCK(ct.Structure):
         ("magicStart0", ct.c_uint32),
         ("magicStart1", ct.c_uint32),
         ("flags", ct.c_uint32),
-        ("targetAddr", ct.c_uint32),
-        ("payloadSize", ct.c_uint32),
+        ("targetAddr", ct.c_uint32), # 4 byte aligned
+        ("payloadSize", ct.c_uint32), # 4 byte aligned
         ("blockNo", ct.c_uint32),
         ("numBlocks", ct.c_uint32),
-        ("fileSize", ct.c_uint32), #or familyID
-        # data 476 byte
-        ("data", ct.c_uint8*476),
+        ("fileSize", ct.c_uint32), # or familyID
+        # if MCU page size is more than 476 bytes, bootloader should support any payload size
+        # if MCU page size is less than 476 bytes, the payload should be a multiple of page size
+        ("data", ct.c_uint8*476), # data 476 bytes padded with zeros
         ("magicEnd", ct.c_uint32)
     ]
+
+class UF2:
+
+    def __init__(self, filename):
+        self.filename = filename
+
+    def get_flag(self, flag):
+        flags = {
+            "not_main_flash": 0x00000001,
+            "file_container": 0x00001000,
+            "family_id_present": 0x00002000,
+            "md5_checksum_present": 0x00004000,
+            "ext_tags_present": 0x00008000
+        }
+
