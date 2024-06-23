@@ -20,3 +20,23 @@ class ELF32_Hdr(ctypes.Structure):
         ("e_shnum", ctypes.c_uint16),
         ("e_shstrndx", ctypes.c_uint16)
     ]
+
+
+class ELF32:
+
+    def __init__(self, filename):
+        self.data = self._get_data(filename)
+        self.elf_hdr = self._unpack_elf_hdr()
+        
+    def _unpack_elf_hdr(self):
+        ehdr_struct = struct.Struct("16s2H5L6H")
+        hdr_data = ehdr_struct.unpack(self.data[0:52])
+        elf_hdr = ELF32_Hdr(*hdr_data)
+        return elf_hdr
+
+    def _get_data(self, filename):
+        with open(filename, "rb") as fh:
+            data = fh.read()
+        return data
+        
+
