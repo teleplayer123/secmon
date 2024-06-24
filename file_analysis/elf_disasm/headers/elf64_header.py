@@ -29,7 +29,10 @@ class ELF64:
         self.elf_hdr = self._unpack_elf_hdr()
         
     def _unpack_elf_hdr(self):
-        pass
+        ehdr_struct = struct.Struct("16s2HL3QL6H")
+        elf_data = ehdr_struct.unpack(self.data[0:64])
+        elf_hdr = ELF64_Hdr(*elf_data)
+        return elf_hdr
 
     def _get_data(self, filename):
         with open(filename, "rb") as fh:
