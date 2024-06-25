@@ -25,7 +25,7 @@ class UF2_Data(ctypes.Structure):
     _fields_ = [
         # if MCU page size is more than 476 bytes, bootloader should support any payload size
         # if MCU page size is less than 476 bytes, the payload should be a multiple of page size
-        ("data", ctypes.c_char_p), # data 476 bytes padded with zeros
+        ("data", ctypes.c_char*476), # data 476 bytes padded with zeros
         ("magicEnd", ctypes.c_uint32)
     ]
 
@@ -33,8 +33,8 @@ class UF2:
 
     def __init__(self, filename):
         self.data = self._get_data(filename)
-        # self.uf2_hdr0 = self._unpack_uf2_hdr(self.data[0:32])
-        # self.uf2_data0 = self._unpack_uf2_data(self.data[32:32+480])
+        self.uf2_hdr0 = self._unpack_uf2_hdr(self.data[0:32])
+        self.uf2_data0 = self._unpack_uf2_data(self.data[32:32+480])
         self.uf2_blocks = {}
 
     def unpack_uf2_blocks(self):
@@ -52,6 +52,7 @@ class UF2:
         data_block = data_struct.unpack(data[:476])[0]
         end_magic = end_struct.unpack(data[476:480])[0]
         uf2_block = UF2_Data()
+        print([hex(x) for x in data_block])
         uf2_block.data = data_block
         if end_magic != MAGIC_END:
             raise ValueError("Incorrect end block magic number: {}".format(hex(end_magic)))
