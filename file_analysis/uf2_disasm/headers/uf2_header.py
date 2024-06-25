@@ -27,6 +27,12 @@ class UF2_Data(NamedTuple):
     data: bytes # data 476 bytes padded with zeros
     magicEnd: ctypes.c_uint32
 
+class UF2_Block(NamedTuple):
+    
+    uf2_hdr: UF2_Hdr
+    uf2_data: UF2_Data
+
+
 class UF2:
 
     def __init__(self, filename):
@@ -36,7 +42,15 @@ class UF2:
         self.uf2_blocks = {}
 
     def unpack_uf2_blocks(self):
-        pass
+        num_blocks = len(self.data) // 512
+        for i in range(num_blocks):
+            curr_idx = i * 512
+            hdr_idx = curr_idx + 32
+            data_idx = hdr_idx + 480
+            hdr = self._unpack_uf2_hdr(self.data[curr_idx:hdr_idx])
+            data = self._unpack_uf2_data(self.data[hdr_idx:data_idx])
+            block = UF2_Block(uf2_hdr=hdr, uf2_data=data)
+            self.uf2_blocks[i] = block
 
     def _unpack_uf2_hdr(self, data):
         uf2_struct = struct.Struct("8L")
