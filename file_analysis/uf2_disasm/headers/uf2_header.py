@@ -49,6 +49,8 @@ class UF2:
         end_magic = end_struct.unpack(data[476:480])[0]
         uf2_block = UF2_Data()
         uf2_block.data = data_block
+        if end_magic != MAGIC_END:
+            raise ValueError("Incorrect end block magic number: {}".format(hex(end_magic)))
         uf2_block.magicEnd = end_magic
         return uf2_block
 
