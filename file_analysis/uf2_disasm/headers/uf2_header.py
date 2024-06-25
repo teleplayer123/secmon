@@ -84,6 +84,10 @@ class UF2:
             "md5_checksum_present": 0x00004000,
             "ext_tags_present": 0x00008000
         }
+        for k, v in flags.items():
+            if flag == v:
+                return k
+        return None
 
     def __repr__(self):
         if len(self.uf2_blocks) < 1:
