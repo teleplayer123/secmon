@@ -25,7 +25,7 @@ class UF2_Data(ctypes.Structure):
     _fields_ = [
         # if MCU page size is more than 476 bytes, bootloader should support any payload size
         # if MCU page size is less than 476 bytes, the payload should be a multiple of page size
-        ("data", ctypes.c_uint8*476), # data 476 bytes padded with zeros
+        ("data", ctypes.c_char_p), # data 476 bytes padded with zeros
         ("magicEnd", ctypes.c_uint32)
     ]
 
@@ -34,12 +34,21 @@ class UF2:
     def __init__(self, filename):
         self.data = self._get_data(filename)
         self.uf2_hdr0 = self._unpack_uf2_hdr(self.data[0:32])
+        self.uf2_data0 = self._unpack_uf2_data(self.data[32:32+480])
 
     def _unpack_uf2_hdr(self, data):
         uf2_struct = struct.Struct("8L")
-        uf2_data = uf2_struct.unpack(data)
-        uf2_block = UF2_Hdr(*uf2_data)
-        return uf2_block
+        uf2_hdr = uf2_struct.unpack(data)
+        uf2_hdr_block = UF2_Hdr(*uf2_hdr)
+        return uf2_hdr_block
+    
+    def _unpack_uf2_data(self, data):
+        data_struct = struct.Struct("476s")
+        end_struct = struct.Struct("L")
+        data_block = data_struct.unpack(data[:476])
+        uf2_data = UF2_Data()
+        uf2_data.data = data_block[0]
+        return uf2_data
 
     def _get_data(self, filename):
         with open(filename, "rb") as fh:
