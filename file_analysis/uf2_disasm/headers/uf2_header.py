@@ -1,6 +1,6 @@
 import ctypes
 import struct
-
+from typing import NamedTuple
 
 MAGIC_START0 = 0x0A324655
 MAGIC_START1 = 0x9E5D5157
@@ -21,13 +21,11 @@ class UF2_Hdr(ctypes.Structure):
         ("fileSize", ctypes.c_uint32), # or familyID
     ]
 
-class UF2_Data(ctypes.Structure):
-    _fields_ = [
-        # if MCU page size is more than 476 bytes, bootloader should support any payload size
-        # if MCU page size is less than 476 bytes, the payload should be a multiple of page size
-        ("data", ctypes.c_uint8*476), # data 476 bytes padded with zeros
-        ("magicEnd", ctypes.c_uint32)
-    ]
+class UF2_Data(NamedTuple):
+    # if MCU page size is more than 476 bytes, bootloader should support any payload size
+    # if MCU page size is less than 476 bytes, the payload should be a multiple of page size
+    data: bytes # data 476 bytes padded with zeros
+    magicEnd: ctypes.c_uint32
 
 class UF2:
 
@@ -51,12 +49,9 @@ class UF2:
         end_struct = struct.Struct("L")
         data_block = data_struct.unpack(data[:476])[0]
         end_magic = end_struct.unpack(data[476:480])[0]
-        data_block_arr = ctypes.cast(data_block, ctypes.POINTER(ctypes.c_ubyte))
-        uf2_block = UF2_Data()
-        uf2_block.data = data_block_arr
         if end_magic != MAGIC_END:
             raise ValueError("Incorrect end block magic number: {}".format(hex(end_magic)))
-        uf2_block.magicEnd = end_magic
+        uf2_block = UF2_Data(data=data_block, magicEnd=end_magic)
         return uf2_block
 
     def _get_data(self, filename):
