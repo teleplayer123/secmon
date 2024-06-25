@@ -33,8 +33,12 @@ class UF2:
 
     def __init__(self, filename):
         self.data = self._get_data(filename)
-        self.uf2_hdr0 = self._unpack_uf2_hdr(self.data[0:32])
-        self.uf2_data0 = self._unpack_uf2_data(self.data[32:32+480])
+        # self.uf2_hdr0 = self._unpack_uf2_hdr(self.data[0:32])
+        # self.uf2_data0 = self._unpack_uf2_data(self.data[32:32+480])
+        self.uf2_blocks = {}
+
+    def unpack_uf2_blocks(self):
+        pass
 
     def _unpack_uf2_hdr(self, data):
         uf2_struct = struct.Struct("8L")
@@ -68,3 +72,6 @@ class UF2:
             "ext_tags_present": 0x00008000
         }
 
+    def __repr__(self):
+        if len(self.uf2_blocks) < 1:
+            raise EnvironmentError("No data to unpack")
