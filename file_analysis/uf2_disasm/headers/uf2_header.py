@@ -45,10 +45,12 @@ class UF2:
     def _unpack_uf2_data(self, data):
         data_struct = struct.Struct("476s")
         end_struct = struct.Struct("L")
-        data_block = data_struct.unpack(data[:476])
-        uf2_data = UF2_Data()
-        uf2_data.data = data_block[0]
-        return uf2_data
+        data_block = data_struct.unpack(data[:476])[0]
+        end_magic = end_struct.unpack(data[476:480])[0]
+        uf2_block = UF2_Data()
+        uf2_block.data = data_block
+        uf2_block.magicEnd = end_magic
+        return uf2_block
 
     def _get_data(self, filename):
         with open(filename, "rb") as fh:
