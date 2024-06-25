@@ -85,3 +85,15 @@ class UF2:
     def __repr__(self):
         if len(self.uf2_blocks) < 1:
             raise EnvironmentError("No data to unpack")
+        i = 0
+        res = ""
+        for idx, block in self.uf2_blocks.items():
+            i += 1
+            r = f"""
+                Block {i}
+                -----------
+                magicStart0: {hex(block.uf2_hdr.magicStart0)}
+                magicStart1: {hex(block.uf2_hdr.magicStart1)}
+                """
+            res += r
+        return res
