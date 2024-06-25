@@ -2,6 +2,9 @@ import ctypes
 import struct
 from typing import NamedTuple
 
+from utils.hexdump import xdump
+
+
 MAGIC_START0 = 0x0A324655
 MAGIC_START1 = 0x9E5D5157
 MAGIC_END = 0x0AB16F30
@@ -90,10 +93,18 @@ class UF2:
         for idx, block in self.uf2_blocks.items():
             i += 1
             r = f"""
-                Block {i}
-                -----------
+                Block {i} offset {hex(idx)}
+                -----------------------
                 magicStart0: {hex(block.uf2_hdr.magicStart0)}
                 magicStart1: {hex(block.uf2_hdr.magicStart1)}
+                flags: {self.get_flag(block.uf2_hdr.flags)}
+                targetAddr: {hex(block.uf2_hdr.targetAddr)}
+                payloadSize: {hex(block.uf2_hdr.payloadSize)}
+                blockNo: {int(block.uf2_hdr.blockNo)}
+                numBlocks: {int(block.uf2_hdr.numBlocks)}
+                fileSize/familyId: {hex(block.uf2_hdr.fileSize)}
+                data: {xdump(block.uf2_data.data)}
+                magicEnd: {hex(block.uf2_data.magicEnd)}
                 """
             res += r
         return res
