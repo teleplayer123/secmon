@@ -95,7 +95,6 @@ class UF2:
         i = 0
         res = ""
         for idx, block in self.uf2_blocks.items():
-            i += 1
             r = f"""
                 Block {i} offset {hex(idx)}
                 -----------------------
@@ -111,4 +110,5 @@ class UF2:
                 magicEnd: {hex(block.uf2_data.magicEnd)}
                 """
             res += r
+            i += 1
         return res
