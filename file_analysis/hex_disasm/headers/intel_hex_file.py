@@ -61,9 +61,9 @@ class IntelHexFile:
         return records
     
     def __str__(self):
-        res = {}
-        for i, v in enumerate(self.records):
-            res[str(i)] = repr(v)
+        res = ""
+        for v in self.records:
+            res += repr(v)
         return res
 
     
