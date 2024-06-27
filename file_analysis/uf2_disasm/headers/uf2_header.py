@@ -114,7 +114,7 @@ class UF2:
                 payloadSize: {hex(block.uf2_hdr.payloadSize)}
                 blockNo: {int(block.uf2_hdr.blockNo)}
                 numBlocks: {int(block.uf2_hdr.numBlocks)}
-                fileSize/familyId: {hex(block.uf2_hdr.fileSize)}
+                fileSize/familyId: {self.get_family_id(hex(block.uf2_hdr.fileSize))}
                 data: {xdump(block.uf2_data.data)}
                 magicEnd: {hex(block.uf2_data.magicEnd)}
                 """
