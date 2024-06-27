@@ -1,4 +1,5 @@
 import ctypes
+import json
 import struct
 from typing import NamedTuple
 
@@ -87,6 +88,14 @@ class UF2:
         for k, v in flags.items():
             if flag == v:
                 return k
+        return None
+    
+    def get_family_id(self, val):
+        with open(r"headers\uf2families.json", "r") as fh:
+            family_list = json.loads(fh.read())
+        for family in family_list:
+            if val == family["id"]:
+                return family["short_name"]
         return None
 
     def __repr__(self):
