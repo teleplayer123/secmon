@@ -21,7 +21,27 @@ OPCode Symbols:
     m: Identifies any of r, (HL), (IX+d) or (IY+d)
 """
 
-class LD_Prefix(NamedTuple):
-    LD_A_n: 0x3E    #LD A,n --> loads unsigned int n into register A
+
+class LD_R_X:
+    #class for LD instructions where left operand is r
+    LD_2OPS = lambda l,r: "{:02x} {:02x}".format(l, r) 
+    LD_R_N = {
+        "A": 0x3E,
+        "B": 0x06,
+        "C": 0x0E,
+        "D": 0x16,
+        "E": 0x1E,
+        "H": 0x26,
+        "L": 0x2E
+    }
+    
+    @classmethod
+    def encode_ld_r_n(self, r, n):
+        op1 = self.LD_R_N.get(r.upper())
+        if op1 is None:
+            raise KeyError("r must be one of: A,B,C,D,E,H,L")
+        ops = self.LD_2OPS(op1, n)
+        return ops
+
 
 
