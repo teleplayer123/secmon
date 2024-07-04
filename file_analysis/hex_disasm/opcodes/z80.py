@@ -23,25 +23,24 @@ OPCode Symbols:
 
 
 class LD_R_X:
-    #class for LD instructions where left operand is r
-    LD_2OPS = lambda l,r: "{:02x} {:02x}".format(l, r) 
-    LD_R_N = {
-        "A": 0x3E,
-        "B": 0x06,
-        "C": 0x0E,
-        "D": 0x16,
-        "E": 0x1E,
-        "H": 0x26,
-        "L": 0x2E
+    """class for LD instructions where left operand is r"""
+
+    LD_R_N = lambda r, n: "{:02x} {:02x}".format(int(f"0b00{r}110", 2), n) 
+    LD_R = {
+        "A": "111",
+        "B": "000",
+        "C": "001",
+        "D": "010",
+        "E": "011",
+        "H": "100",
+        "L": "101"
     }
     
     @classmethod
     def encode_ld_r_n(self, r, n):
-        op1 = self.LD_R_N.get(r.upper())
+        op1 = self.LD_R.get(r.upper())
         if op1 is None:
             raise KeyError("r must be one of: A,B,C,D,E,H,L")
-        ops = self.LD_2OPS(op1, n)
+        ops = self.LD_R_N(op1, n)
         return ops
-
-
 
