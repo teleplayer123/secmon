@@ -26,7 +26,7 @@ class LD_R_KeyError(Exception):
         self.message = "r must be one of: A,B,C,D,E,H,L"
         super().__init__(self.message)
 
-class LD:
+class LD_8Bit:
     """class for LD instructions"""
 
     LD_R_N = lambda r, n: "{:02x} {:02x}".format(int(f"0b00{r}110", 2), n) 
