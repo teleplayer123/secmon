@@ -21,6 +21,10 @@ OPCode Symbols:
     m: Identifies any of r, (HL), (IX+d) or (IY+d)
 """
 
+class LD_R_KeyError(Exception):
+    def __init__(self):
+        self.message = "r must be one of: A,B,C,D,E,H,L"
+        super().__init__(self.message)
 
 class LD_R_X:
     """class for LD instructions where left operand is r"""
@@ -42,7 +46,22 @@ class LD_R_X:
     def encode_ld_r_n(self, r, n):
         op1 = self.LD_R.get(r.upper())
         if op1 is None:
-            raise KeyError("r must be one of: A,B,C,D,E,H,L")
+            raise LD_R_KeyError()
         ops = self.LD_R_N(op1, n)
         return ops
 
+    @classmethod
+    def encode_ld_r_hl(self, r):
+        op1 = self.LD_R.get(r.upper())
+        if op1 is None:
+            raise LD_R_KeyError()
+        op = self.LD_R_HL(op1)
+        return op
+    
+    @classmethod
+    def encode_ld_r_tx_d(self, r, d):
+        op1 = self.LD_R.get(r.upper())
+        if op1 is None:
+            raise LD_R_KeyError()
+        ops = self.LD_R_IX_D(op1, d)
+        return ops
