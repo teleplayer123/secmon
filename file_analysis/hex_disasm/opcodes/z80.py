@@ -38,6 +38,7 @@ class LD:
     LD_IY_D_R = lambda r, d: "{:02x} {:02x} {:02x}".format(int("0b11111101", 2), int(f"0b01110{r}", 2), d)
     LD_HL_N = lambda n: "{:02x} {:02x}".format(int("0b00110110", 2), n)
     LD_IX_D_N = lambda d, n: "{:02x} {:02x} {:02x} {:02x}".format(int("0b11011101", 2), int("0b00110110", 2), d, n)
+    LD_IY_D_N = lambda d, n: "{:02x} {:02x} {:02x} {:02x}".format(int("0b11111101", 2), int("0b00110110", 2), d, n)
     LD_R = {
         "A": "111",
         "B": "000",
@@ -113,3 +114,9 @@ class LD:
     def encode_ld_ix_d_n(self, d, n):
         ops = self.LD_IX_D_N(d, n)
         return ops
+    
+    @classmethod
+    def encode_ld_iy_d_n(self, d, n):
+        ops = self.LD_IY_D_N(d, n)
+        return ops
+
