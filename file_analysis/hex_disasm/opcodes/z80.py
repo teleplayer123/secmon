@@ -26,6 +26,8 @@ class LD_R_X:
     """class for LD instructions where left operand is r"""
 
     LD_R_N = lambda r, n: "{:02x} {:02x}".format(int(f"0b00{r}110", 2), n) 
+    LD_R_HL = lambda r: "{:02x}".format(int(f"0b01{r}110", 2))
+    LD_R_IX_D = lambda r, d: "{:02x} {:02x} {:02x}".format(int("0b11011101", 2), int(f"0b01{r}110", 2), d)
     LD_R = {
         "A": "111",
         "B": "000",
