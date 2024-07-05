@@ -26,12 +26,18 @@ class LD_R_KeyError(Exception):
         self.message = "r must be one of: A,B,C,D,E,H,L"
         super().__init__(self.message)
 
-class LD_R_X:
-    """class for LD instructions where left operand is r"""
+class LD:
+    """class for LD instructions"""
 
     LD_R_N = lambda r, n: "{:02x} {:02x}".format(int(f"0b00{r}110", 2), n) 
     LD_R_HL = lambda r: "{:02x}".format(int(f"0b01{r}110", 2))
     LD_R_IX_D = lambda r, d: "{:02x} {:02x} {:02x}".format(int("0b11011101", 2), int(f"0b01{r}110", 2), d)
+    LD_R_IY_D = lambda r, d: "{:02x} {:02x} {:02x}".format(int("0b11111101", 2), int(f"0b01{r}110", 2), d)
+    LD_HL_R = lambda r: "{:02x}".format(int(f"0b01110{r}", 2))
+    LD_IX_D_R = lambda r, d: "{:02x} {:02x} {:02x}".format(int("0b11011101", 2), int(f"0b01110{r}", 2), d)
+    LD_IY_D_R = lambda r, d: "{:02x} {:02x} {:02x}".format(int("0b11111101", 2), int(f"0b01110{r}", 2), d)
+    LD_HL_N = lambda n: "{:02x} {:02x}".format(int("0b00110110", 2), n)
+    LD_IX_D_N = lambda d, n: "{:02x} {:02x} {:02x} {:02x}".format(int("0b11011101", 2), int("0b00110110", 2), d, n)
     LD_R = {
         "A": "111",
         "B": "000",
@@ -59,9 +65,51 @@ class LD_R_X:
         return op
     
     @classmethod
-    def encode_ld_r_tx_d(self, r, d):
+    def encode_ld_r_ix_d(self, r, d):
         op1 = self.LD_R.get(r.upper())
         if op1 is None:
             raise LD_R_KeyError()
         ops = self.LD_R_IX_D(op1, d)
+        return ops
+
+    @classmethod
+    def encode_ld_r_iy_d(self, r, d):
+        op1 = self.LD_R.get(r.upper())
+        if op1 is None:
+            raise LD_R_KeyError()
+        ops = self.LD_R_IY_D(op1, d)
+        return ops
+    
+    @classmethod
+    def encode_ld_hl_r(self, r):
+        op1 = self.LD_R.get(r.upper())
+        if op1 is None:
+            raise LD_R_KeyError()
+        op = self.LD_HL_R(op1)
+        return op
+
+    @classmethod
+    def encode_ld_ix_d_r(self, d, r):
+        op1 = self.LD_R.get(r.upper())
+        if op1 is None:
+            raise LD_R_KeyError()
+        ops = self.LD_IX_D_R(op1, d)
+        return ops
+
+    @classmethod
+    def encode_ld_iy_d_r(self, d, r):
+        op1 = self.LD_R.get(r.upper())
+        if op1 is None:
+            raise LD_R_KeyError()
+        ops = self.LD_IY_D_R(op1, d)
+        return ops
+
+    @classmethod
+    def encode_ld_hl_n(self, n):
+        ops = self.LD_HL_N(n)
+        return ops
+
+    @classmethod
+    def encode_ld_ix_d_n(self, d, n):
+        ops = self.LD_IX_D_N(d, n)
         return ops
