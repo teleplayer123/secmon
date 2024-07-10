@@ -39,6 +39,13 @@ class LD_8Bit:
     LD_HL_N = lambda n: "{:02x} {:02x}".format(int("0b00110110", 2), n)
     LD_IX_D_N = lambda d, n: "{:02x} {:02x} {:02x} {:02x}".format(int("0b11011101", 2), int("0b00110110", 2), d, n)
     LD_IY_D_N = lambda d, n: "{:02x} {:02x} {:02x} {:02x}".format(int("0b11111101", 2), int("0b00110110", 2), d, n)
+    LD_A_BC = "0A"
+    LD_A_DE = "1A"
+    LD_BC_A = "02"
+    LD_DE_A = "12"
+    LD_A_I = "ED 57"  #condition bits are affected
+    LD_NN_A = lambda n0, n1: "{:02x} {:02x} {:02x}".format(int("0b00110010", 2), n0, n1)
+    LD_A_NN = lambda n0, n1: "{:02x} {:02x} {:02x}".format(int("0b00111010", 2), n0, n1)
     LD_R = {
         "A": "111",
         "B": "000",
