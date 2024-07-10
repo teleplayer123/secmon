@@ -29,6 +29,7 @@ class LD_R_KeyError(Exception):
 class LD_8Bit:
     """class for LD instructions"""
 
+    LD_R_R = lambda r0, r1: "{:02x}".format(int(f"0b01{r0}{r1}", 2))
     LD_R_N = lambda r, n: "{:02x} {:02x}".format(int(f"0b00{r}110", 2), n) 
     LD_R_HL = lambda r: "{:02x}".format(int(f"0b01{r}110", 2))
     LD_R_IX_D = lambda r, d: "{:02x} {:02x} {:02x}".format(int("0b11011101", 2), int(f"0b01{r}110", 2), d)
@@ -43,7 +44,10 @@ class LD_8Bit:
     LD_A_DE = "1A"
     LD_BC_A = "02"
     LD_DE_A = "12"
+    LD_I_A = "ED 47"
+    LD_R_A = "ED 4F"
     LD_A_I = "ED 57"  #condition bits are affected
+    LD_A_R = "ED 5F"  #condition bits are affected
     LD_NN_A = lambda n0, n1: "{:02x} {:02x} {:02x}".format(int("0b00110010", 2), n0, n1)
     LD_A_NN = lambda n0, n1: "{:02x} {:02x} {:02x}".format(int("0b00111010", 2), n0, n1)
     LD_R = {
@@ -55,6 +59,15 @@ class LD_8Bit:
         "H": "100",
         "L": "101"
     }
+
+    @classmethod
+    def encode_ld_r_r(self, r0, r1):
+        op1 = self.LD_R.get(r0)
+        op2 = self.LD_R.get(r1)
+        if op1 is None or op2 is None:
+            raise LD_R_KeyError()
+        ops = self.LD_R_R(op1, op2)
+        return ops
     
     @classmethod
     def encode_ld_r_n(self, r, n):
