@@ -150,6 +150,16 @@ class LD_8Bit:
     def encode_ld_iy_d_n(self, d, n):
         ops = self.LD_IY_D_N(d, n)
         return ops
+    
+    @classmethod
+    def encode_ld_nn_a(self, n0, n1):
+        ops = self.LD_NN_A.format(n0, n1)
+        return ops
+
+    @classmethod
+    def encode_ld_a_nn(self, n0, n1):
+        ops = self.LD_A_NN.format(n0, n1)
+        return ops
 
 
 class LD_16Bit:
@@ -161,6 +171,6 @@ class LD_16Bit:
         "HL": "10",
         "SP": "11"
     }
-    LD_DD_NN = lambda dd, nn: "{:02x}"
+    LD_DD_NN = lambda dd, nn: "{:02x} {:04x}".format(int(f"0b00{dd}0001", 2), nn)
 
 
