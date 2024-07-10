@@ -21,13 +21,24 @@ OPCode Symbols:
     m: Identifies any of r, (HL), (IX+d) or (IY+d)
 """
 
+class CPU_Control(NamedTuple):
+    NOP: 0x00
+    HALT: 0x76
+    DISABLE: 0xF3
+    ENABLE: 0xFB
+    SET: 0xED
+    IM0: 0x46
+    IM1: 0x56
+    IM2: 0x5E
+
+
 class LD_R_KeyError(Exception):
     def __init__(self):
         self.message = "r must be one of: A,B,C,D,E,H,L"
         super().__init__(self.message)
 
 class LD_8Bit:
-    """class for LD instructions"""
+    """class for 8 bit LD instructions"""
 
     LD_R_R = lambda r0, r1: "{:02x}".format(int(f"0b01{r0}{r1}", 2))
     LD_R_N = lambda r, n: "{:02x} {:02x}".format(int(f"0b00{r}110", 2), n) 
@@ -139,4 +150,17 @@ class LD_8Bit:
     def encode_ld_iy_d_n(self, d, n):
         ops = self.LD_IY_D_N(d, n)
         return ops
+
+
+class LD_16Bit:
+    """class for 16 bit LD instructions"""
+
+    REG_PAIRS = {
+        "BC": "00",
+        "DE": "01",
+        "HL": "10",
+        "SP": "11"
+    }
+    LD_DD_NN = lambda dd, nn: "{:02x}"
+
 
