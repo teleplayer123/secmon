@@ -17,6 +17,15 @@ class PCAP_HDR(ct.Structure):
         ("network", ct.c_uint32)
     ]
 
+class PCAP_REC(ct.Structure):
+
+    _fields_ = [
+        ("ts_sec", ct.c_uint32),
+        ("ts_usec", ct.c_uint32),
+        ("incl_len", ct.c_uint32),
+        ("orig_len", ct.c_uint32)
+    ]
+
 class PCAPHeader:
     
     HDR_STRUCT = struct.Struct("LHHLLLL")
