@@ -29,16 +29,12 @@ class Win32Util:
 
     def win_pkt_cap(self, ip, proto="TCP", cap_time=10):
         """requires admin privilages"""
-        # subprocess.check_output(f"pktmon filter add -i {ip} -t {proto}", shell=True, encoding="utf-8")
-        # subprocess.check_output("pktmon start --etw", shell=True, encoding="utf-8")
         cmds = [f"pktmon filter add -i {ip} -t {proto}", "pktmon start --etw"]
         self.run_cmds(cmds)
         sleep(cap_time)
         file_info = self.run_cmd("pktmon stop")
-        # file_info = subprocess.check_output("pktmon stop", shell=True, encoding="utf-8")
         file_info = file_info.split("\n")[-2]
         cap_file = file_info.split(" ")[2]
-        # res = subprocess.check_output(f"pktmon etl2txt {cap_file}", shell=True, encoding="utf-8")
         res = self.run_cmd(f"pktmon etl2txt {cap_file}")
         return res
     
