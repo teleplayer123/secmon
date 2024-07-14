@@ -14,3 +14,5 @@ class Win32Util:
     def list_services(self):
         cmd = "powershell.exe reg query \"HKLM\\SYSTEM\\CurrentControlSet\\services\""
         return self.run_cmd(cmd)
+    
+    
