@@ -22,6 +22,7 @@ class Win32Util:
         return res
 
     def win_pkt_cap(self, ip, proto="TCP", cap_time=10):
+        """requires admin privilages"""
         subprocess.check_output(f"pktmon filter add -i {ip} -t {proto}", shell=True, encoding="utf-8")
         subprocess.check_output("pktmon start --etw", shell=True, encoding="utf-8")
         sleep(cap_time)
