@@ -20,7 +20,7 @@ def get_endpoints(url):
                 endpoint = f"{url}{path}.{method.lower()}"
                 endpoints.append(endpoint)
 
-    eps = ["/", "/v1/", "/api/", "/docs/", "/admin/", "/api/v2/", "/v2/api/", "/:id/", "/:id/details/", "/search/", "/login/", "/auth/"]
+    eps = ["/", "/api/"]
     for suffix in eps:
         new_url = f"{url}{suffix}"
         if requests.head(new_url).status_code == 200:
