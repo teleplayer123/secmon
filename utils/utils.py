@@ -1,4 +1,7 @@
-
+Bps2Mbps = lambda r: r / 125000
+bps2Mbps = lambda r: r / 1e+6
+Kbps2Mbps = lambda r: r / 1000
+KBps2Mbps = lambda r: r / 125
 
 def convert_bytes(n_bytes):
     units = ["B", "KB", "MB", "GB", "TB", "PB"]
