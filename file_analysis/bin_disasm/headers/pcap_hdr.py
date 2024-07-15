@@ -4,6 +4,7 @@ import struct
 
 MAGIC_NUM_MICRO = 0xA1B2C3D4 
 MAGIC_NUM_NANO = 0xA1B23C4D
+MAGIC_NUM_MOD = 0xA1B2CD34
 
 class PCAP_HDR(ct.Structure):
 
@@ -24,6 +25,16 @@ class PCAP_REC(ct.Structure):
         ("ts_usec", ct.c_uint32),
         ("incl_len", ct.c_uint32),
         ("orig_len", ct.c_uint32)
+    ]
+
+class PCAP_REC_MOD(ct.Structure):
+
+    _fields_ = [
+        ("pcaprec_hdr", PCAP_REC),
+        ("ifindex", ct.c_uint32),
+        ("protocol", ct.c_uint16),
+        ("pkt_type", ct.c_uint8),
+        ("pad", ct.c_uint8)
     ]
 
 class PCAPHeader:
