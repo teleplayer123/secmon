@@ -150,6 +150,7 @@ class WDI_MAC_ADDRESS(ct.Structure):
         ("Address", UINT8 * 6)
     ]
 
+WDI_CIPHER_ALGORITHM_T = UINT
 class WDI_CIPHER_ALGORITHM(Enum):
     DOT11_CIPHER_ALGO_NONE = 0x00
     DOT11_CIPHER_ALGO_WEP40 = 0x01
@@ -211,7 +212,7 @@ class WIFI_STATION_CAPABILITIES(ct.Structure):
         ("NumAkmsSupported", ULONG),
         ("AkmsList", RSNA_AKM_SUITE),
         ("NumFIPSCertifiedCipherAlgorithms", ULONG),
-        ("FIPSCertifiedCipherAlgorithmsList", WDI_CIPHER_ALGORITHM),
+        ("FIPSCertifiedCipherAlgorithmsList", WDI_CIPHER_ALGORITHM_T),
         ("MSCSSupported", BOOLEAN),
         ("DSCPToUPMappingSupported", BOOLEAN),
         ("MaxNumConfigurableActionFrameWakePatterns", UINT32),
