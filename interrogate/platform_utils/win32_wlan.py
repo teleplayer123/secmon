@@ -97,7 +97,7 @@ class WDI_BAND_ID(Enum):
 
 RSNA_OUI_PREFIX = 0x205
 
-AKM_FROM_TYPE = lambda p,a: int("0x205{:02x}".format(a), 16)
+AKM_FROM_TYPE = lambda p,a: int("{:04x}{:02x}".format(p, a), 16)
 
 class RSNA_AKM_SUITE(Enum):
     rsna_akm_none = AKM_FROM_TYPE(RSNA_OUI_PREFIX, 0),
