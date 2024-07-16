@@ -1,3 +1,4 @@
+import os
 import subprocess
 from time import sleep
 
@@ -55,4 +56,18 @@ class Win32Util:
                 evars.append(evar.strip())
         return evars[3:]
     
-
+    def check_autorun_regkeys(self):
+        regkey_values = {}
+        autorun_keys = [
+            r"reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+            r"reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce",
+            r"reg query HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
+            r"reg query HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"
+        ]
+        for cmd in autorun_keys:
+            val = self.run_cmd(cmd)
+            ks = cmd.split("\\")
+            k = "{}-{}".format(ks[0].split(" ")[-1], ks[-1])
+            regkey_values[k] = val.strip("\n")
+        return regkey_values
+    
