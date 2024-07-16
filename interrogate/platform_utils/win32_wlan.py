@@ -1,5 +1,5 @@
 import ctypes as ct
-from ctypes.wintypes import DWORD, HANDLE, ULONG, BOOLEAN
+from ctypes.wintypes import DWORD, HANDLE, ULONG, BOOLEAN, UINT
 from enum import Enum
 import struct
 
@@ -47,6 +47,7 @@ class WLAN_INTF_OPCODE(Enum):
     wlan_intf_opcode_ihv_start = 0x30000000
     wlan_intf_opcode_ihv_end = 0x3fffffff
 
+DOT11_AUTH_ALGORITHM_T = UINT
 class DOT11_AUTH_ALGORITHM(Enum):
     DOT11_AUTH_ALGO_80211_OPEN = 1
     DOT11_AUTH_ALGO_80211_SHARED_KEY = 2
@@ -63,6 +64,7 @@ class DOT11_AUTH_ALGORITHM(Enum):
     DOT11_AUTH_ALGO_IHV_START = 0x80000000
     DOT11_AUTH_ALGO_IHV_END = 0xffffffff
 
+DOT11_CIPHER_ALGORITHM_T = UINT
 class DOT11_CIPHER_ALGORITHM(Enum):
     DOT11_CIPHER_ALGO_NONE = 0x00
     DOT11_CIPHER_ALGO_WEP40 = 0x01
@@ -84,6 +86,7 @@ class DOT11_CIPHER_ALGORITHM(Enum):
 
 MAX_SIMULTANEOUS_BAND_CONNECTIONS_ALLOWED = 4
 
+WDI_BAND_ID_T = UINT
 class WDI_BAND_ID(Enum):
     WDI_BAND_ID_UNKNOWN = 0
     WDI_BAND_ID_2400 = 1
@@ -98,7 +101,7 @@ class WDI_BAND_ID(Enum):
 RSNA_OUI_PREFIX = 0x205
 
 AKM_FROM_TYPE = lambda p,a: int("{:04x}{:02x}".format(p, a), 16)
-
+RSNA_AKM_SUITE_T = UINT32
 class RSNA_AKM_SUITE(Enum):
     rsna_akm_none = AKM_FROM_TYPE(RSNA_OUI_PREFIX, 0),
     rsna_akm_1x = AKM_FROM_TYPE(RSNA_OUI_PREFIX, 1),
@@ -130,15 +133,15 @@ class RSNA_AKM_SUITE(Enum):
 class DOT11_AUTH_CIPHER_PAIR(ct.Structure):
 
     _fields_ = [
-        ("AuthAlgoId", DOT11_AUTH_ALGORITHM),
-        ("CipherAlgoId", DOT11_CIPHER_ALGORITHM)
+        ("AuthAlgoId", DOT11_AUTH_ALGORITHM_T),
+        ("CipherAlgoId", DOT11_CIPHER_ALGORITHM_T)
     ]
 
 class WIFI_STA_BANDS_COMBINATION(ct.Structure):
 
     _fields_ = [
         ("NumStaBands", UINT8),
-        ("BandIDs", WDI_BAND_ID * MAX_SIMULTANEOUS_BAND_CONNECTIONS_ALLOWED)
+        ("BandIDs", WDI_BAND_ID_T * MAX_SIMULTANEOUS_BAND_CONNECTIONS_ALLOWED)
     ]
 
 class WDI_MAC_ADDRESS(ct.Structure):
@@ -195,11 +198,11 @@ class WIFI_STATION_CAPABILITIES(ct.Structure):
         ("FTMNumberOfSupportedTargets", UINT32),
         ("HostWPA3FIPSModeEnabled_Deprecated", BOOLEAN),
         ("NumSupportedUnicastAlgorithms", ULONG),
-        ("UnicastAlgorithmsList", ct.POINTER(DOT11_AUTH_CIPHER_PAIR)),
+        ("UnicastAlgorithmsList", DOT11_AUTH_CIPHER_PAIR),
         ("NumSupportedMulticastDataAlgorithms", ULONG),
-        ("MulticastDataAlgorithmsList", ct.POINTER(DOT11_AUTH_CIPHER_PAIR)),
+        ("MulticastDataAlgorithmsList", DOT11_AUTH_CIPHER_PAIR),
         ("NumSupportedMulticastMgmtAlgorithms", ULONG),
-        ("MulticastMgmtAlgorithmsList", ct.POINTER(DOT11_AUTH_CIPHER_PAIR)),
+        ("MulticastMgmtAlgorithmsList", DOT11_AUTH_CIPHER_PAIR),
         ("NumSecondaryStaBandCombinations", ULONG),
         ("SecondaryStaBandsCombinations", WIFI_STA_BANDS_COMBINATION),
         ("MaxMLOLinksSupported", ULONG),
