@@ -2,5 +2,3 @@ test*
 __pycache__
 *test.py
 /file_analysis/elf_disasm/elf.h
-/interrogate/platform_utils/shared/
-/interrogate/platform_utils/km
