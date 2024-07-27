@@ -7,7 +7,17 @@ class ProcessUsage:
         self.cache = {}
 
     def iter_win_svcs(self):
-        running_svcs = []
+        svcs = {}
         for p in psutil.win_service_iter():
-            running_svcs.append(p)
-        return running_svcs
+            d = p.as_dict()
+            svcs[p.name()] = {
+                "display_name": d["display_name"],
+                "binpath": d["binpath"],
+                "username": d["username"],
+                "start_type": d["start_type"],
+                "status": d["status"],
+                "pid": d["pid"],
+                "name": d["name"],
+                "description": d["description"]
+            }
+        return svcs

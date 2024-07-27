@@ -1,5 +1,7 @@
 from device_usage import *
 
+#TODO implement file analysis tools to analyze files discovered by device usage
+
 class SecMonInfo:
 
     def __init__(self):
