@@ -60,3 +60,5 @@ class CpuUsage:
         }
         cpu_stats["cpu_load_avg"] = avg_cpu_load
         return cpu_stats
+
+    def 

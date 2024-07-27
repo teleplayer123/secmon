@@ -29,3 +29,15 @@ class MemoryUsage:
         mem_stats["swap_memory"] = swap_mem
         return mem_stats
     
+    def disk_usage(self):
+        usage_dict = {}
+        partitions = psutil.disk_partitions()
+        for part in partitions:
+            du = psutil.disk_usage(part.mountpoint)
+            usage_dict[str(part.mountpoint)] = {
+                "total": convert_bytes(du.total),
+                "used": convert_bytes(du.used),
+                "free": convert_bytes(du.free),
+                "pct_used": du.percent
+            }
+        return usage_dict
