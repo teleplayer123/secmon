@@ -4,7 +4,7 @@ import psutil
 class ProcessUsage:
 
     def __init__(self):
-        self.cache = {}
+        self.running_services = {}
 
     def iter_win_svcs(self):
         svcs = {}

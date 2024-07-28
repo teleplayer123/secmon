@@ -13,6 +13,7 @@ class NetworkUsage:
         return io
     
     def measure_usage(self, block_interval=5):
+        usage = {}
         io1 = self.get_io_counter()
         time.sleep(block_interval)
         io2 = self.get_io_counter()
@@ -21,7 +22,12 @@ class NetworkUsage:
         for iface in ifaces:
             rx = convert_bytes(io2[iface].bytes_recv - io1[iface].bytes_recv)
             tx = convert_bytes(io2[iface].bytes_sent - io1[iface].bytes_sent)
-            self.net_usage[iface] = {"rx": rx, "tx": tx}
+            usage[iface] = {"rx": rx, "tx": tx}
+        self.net_usage[str(time.asctime())] = {
+            "first": io1,
+            "second": io2
+        }
+        return usage
 
     def network_sockets(self, net_type="inet"):
         socket_info = {
@@ -54,3 +60,11 @@ class NetworkUsage:
                 
         return socket_info
                 
+    def usage_by_iface(self, iface, block_interval=10):
+        res = None
+        usage = self.measure_usage(block_interval=block_interval)
+        try:
+            res = usage[iface]
+        except KeyError:
+            raise KeyError("Interface not found")
+        return res
