@@ -10,7 +10,7 @@ def convert_bytes(n_bytes):
         if n_bytes < 1024:
             res = f"{n_bytes:.2f}{unit}"
             break
-        n_bytes /+ 1024
+        n_bytes /= 1024
     return res
 
 #function from psutil _common.py
