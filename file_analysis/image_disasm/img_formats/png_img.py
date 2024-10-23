@@ -34,13 +34,14 @@ class PNG:
         print(f"CRC: {hex(ccrc)}")
 
     def _unpack_sig(self):
-        sig_struct = struct.Struct("Q")
+        sig_struct = struct.Struct(">Q")
         sig = sig_struct.unpack(self.data[0:self.SIG_STRUCT.size])[0]
         return sig
 
     def _unpack_chunk(self, raw_chunk):
-        chunk_len = int(struct.unpack("I", raw_chunk[0:4])[0])
-        chunk_struct = struct.Struct("I4s{}sI".format(chunk_len))
+        chunk_len = int(struct.unpack(">I", raw_chunk[0:4])[0])
+        print("Length: {}".format(chunk_len))
+        chunk_struct = struct.Struct(">I4s{}sI".format(chunk_len))
         chunk = chunk_struct.unpack(raw_chunk[0:chunk_struct.size])
         clen = int(chunk[0])
         assert chunk_len == clen, "Unpacking Error PNG_BASE"
