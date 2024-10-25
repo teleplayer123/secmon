@@ -30,7 +30,7 @@ class PNG:
         print("IHDR\n-------\n")
         print(f"Length: {int(clen)}")
         print(f"Type: {ctype.decode()}")
-        print(f"Data: {cdata.decode()}")
+        print(f"Data: {cdata}")
         print(f"CRC: {hex(ccrc)}")
 
     def _unpack_sig(self):
