@@ -3,3 +3,4 @@ __pycache__
 *test.py
 /file_analysis/elf_disasm/elf.h
 data
+venv
