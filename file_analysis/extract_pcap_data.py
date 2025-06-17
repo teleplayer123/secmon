@@ -49,7 +49,7 @@ def sort_pkts_seqnum(pkts):
             dot11_layer = pkt.getlayer(Dot11)
             seq = dot11_layer.SC >> 4
             sorted_pkts[seq] = pkt
-        except TypeError:
+        except (TypeError, AttributeError):
             continue
     return sorted_pkts
 
