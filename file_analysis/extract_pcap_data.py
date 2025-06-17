@@ -64,6 +64,7 @@ def extract_pcap_data(pcap_file):
     if len(packet_data) == 0:
         raise ValueError("No packets found in the pcap file.")
     result = []
+    packet_data = sort_pkts_seqnum(packet_data)
     for seq, pkt in packet_data.items():
         try:
             data = pkt[Raw].load
