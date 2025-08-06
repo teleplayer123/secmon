@@ -1,4 +1,4 @@
 # secmon
 
-collection of tools to help in security analysis of windows and linux devices.
-Currently incomplete and in ealry stages of development.
+This project aims to help in security analysis of windows and linux devices.
+Still in development.

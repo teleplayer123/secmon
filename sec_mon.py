@@ -1,4 +1,4 @@
-from device_usage import *
+from device_analysis import *
 
 #TODO implement file analysis tools to analyze files discovered by device usage
 
@@ -33,3 +33,5 @@ class SecMon:
 
     def __init__(self):
         self.sec_info = SecMonInfo()
+
+    
