@@ -1,12 +1,11 @@
 import psutil
 import time
-from utils.utils import convert_bytes
+from utils.utils import Bps2Mbps
 
 
 class NetworkUsage:
     def __init__(self):
         self.ifaces = []
-        self.net_usage = {}
 
     def get_io_counter(self, pernic=True):
         io = psutil.net_io_counters(pernic=pernic)
@@ -20,13 +19,9 @@ class NetworkUsage:
         ifaces = list(io1.keys())
         self.ifaces.append(iface for iface in ifaces if iface not in self.ifaces)
         for iface in ifaces:
-            rx = convert_bytes(io2[iface].bytes_recv - io1[iface].bytes_recv)
-            tx = convert_bytes(io2[iface].bytes_sent - io1[iface].bytes_sent)
+            rx = Bps2Mbps(io2[iface].bytes_recv - io1[iface].bytes_recv)
+            tx = Bps2Mbps(io2[iface].bytes_sent - io1[iface].bytes_sent)
             usage[iface] = {"rx": rx, "tx": tx}
-        self.net_usage[str(time.asctime())] = {
-            "first": io1,
-            "second": io2
-        }
         return usage
 
     def network_sockets(self, net_type="inet"):

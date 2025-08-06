@@ -49,7 +49,7 @@ class CpuUsage:
         util_pct = psutil.cpu_percent(percpu=True, interval=block_interval)
         n_cpus = len(util_pct)
         for i in range(n_cpus):
-            cpu_util_pct[f"{i}"] = f"{util_pct[i]}%"
+            cpu_util_pct[f"{i}"] = util_pct[i]
         cpu_stats["cpu_utilization"] = cpu_util_pct
         cpu_stats["available_cpus"] = len(psutil.Process().cpu_affinity())
         cpu_loads = psutil.getloadavg()
