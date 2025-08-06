@@ -44,7 +44,7 @@ class SecMon:
         while time.time() < end_time:
             cpu = self.sec_info.cpu_stats(block_interval=block_interval)
             mem = self.sec_info.mem_stats()
-            device_stats[time.time()] = {
+            device_stats[int(time.time())] = {
                 "cpu": cpu,
                 "mem": mem,
             }
@@ -78,7 +78,7 @@ class SecMon:
         end_time = time.time() + duration
         while time.time() < end_time:
             usage = net.measure_usage(block_interval=block_interval)
-            net_usage[time.time()] = usage
+            net_usage[int(time.time())] = usage
         return net_usage
     
     def graph_net_stats(self, block_interval=5, duration=60):
