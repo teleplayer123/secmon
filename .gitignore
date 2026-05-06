@@ -4,3 +4,6 @@ __pycache__
 /file_analysis/elf_disasm/elf.h
 data
 venv
+.venv
+.claude
+.DS_Store
