@@ -5,6 +5,7 @@ import json
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
+import psutil
 import sys
 import time
 
@@ -251,8 +252,11 @@ def main():
         print(json.dumps(stats, indent=2))
 
     elif args.command == "sockets":
-        print(json.dumps(mon.get_socket_stats(net_type=args.type), indent=2))
-
+        try:
+            print(json.dumps(mon.get_socket_stats(net_type=args.type), indent=2))
+        except psutil.AccessDenied:
+            print("Permission denied: run this option with sudo.")
+            sys.exit(1)
     elif args.command == "graph-device":
         print(f"Collecting device stats for {args.duration}s (sample interval: {args.block_interval}s)…")
         mon.graph_device_stats(block_interval=args.block_interval, duration=args.duration)
