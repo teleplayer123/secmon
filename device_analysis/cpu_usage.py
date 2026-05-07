@@ -39,8 +39,7 @@ class CpuUsage:
                 "user_mode_time": f"{mode_times[i].user} secs",
                 "system_mode_time": f"{mode_times[i].system} secs",
                 "idle_mode_time": f"{mode_times[i].idle} secs",
-                "interrupt_mode_time": f"{mode_times[i].interrupt} secs",
-                "dpc_mode_time": f"{mode_times[i].dpc} secs"
+                "nice_mode_time": f"{mode_times[i].nice} secs",
             }
         cpu_stats["time_cpu_in_modes"] = cpu_mode_times
 
@@ -51,7 +50,6 @@ class CpuUsage:
         for i in range(n_cpus):
             cpu_util_pct[f"{i}"] = util_pct[i]
         cpu_stats["cpu_utilization"] = cpu_util_pct
-        cpu_stats["available_cpus"] = len(psutil.Process().cpu_affinity())
         cpu_loads = psutil.getloadavg()
         avg_cpu_load = {
             "last_1min": cpu_loads[0],
