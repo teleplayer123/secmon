@@ -1,11 +1,14 @@
 from device_analysis import *
 
 import argparse
+import datetime
 import json
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import os
 import pandas as pd
 import psutil
+import seaborn as sns
 import sys
 import time
 
@@ -59,39 +62,117 @@ class SecMon:
         times = list(stats.keys())
         cpu_usages = [stats[t]["cpu"]["cpu_utilization"] for t in times]
         mem_usages = [stats[t]["mem"]["virtual_memory"]["pct_memory_used"] for t in times]
-        self._graph_cpu_stats(cpu_usages)
-        self._graph_mem_stats(mem_usages)
+        self._graph_cpu_stats(cpu_usages, timestamps=times)
+        self._graph_mem_stats(mem_usages, timestamps=times)
 
-    def _graph_cpu_stats(self, cpu_stats):
+    def _graph_cpu_stats(self, cpu_stats, timestamps=None):
+        sns.set_theme(style="darkgrid", palette="muted")
         df = pd.DataFrame(cpu_stats)
-        fig, ax = plt.subplots(figsize=(12, 8))
-        x_labels = df.index
-        cores = df.columns.tolist()
-        ax.set_title("CPU Utilization per Core (%)")
-        ax.set_xlabel("Sample")
-        ax.set_ylabel("Utilization (%)")
-        plt.xticks(ticks=range(len(x_labels)), labels=x_labels)
-        for i in range(len(cores)):
-            plt.plot(range(len(x_labels)), df[cores[i]], label=f"Core {cores[i]}")
-        plt.legend()
+        df.columns = [f"Core {c}" for c in df.columns]
+        n_samples = len(df)
+
+        if timestamps and len(timestamps) == n_samples:
+            x_labels = [datetime.datetime.fromtimestamp(t).strftime("%H:%M:%S") for t in timestamps]
+        else:
+            x_labels = [str(i) for i in range(n_samples)]
+
+        palette = sns.color_palette("tab10", n_colors=len(df.columns))
+        fig, ax = plt.subplots(figsize=(14, 6))
+        fig.patch.set_facecolor("#1a1a2e")
+        ax.set_facecolor("#16213e")
+
+        for idx, col in enumerate(df.columns):
+            ax.plot(range(n_samples), df[col], label=col, color=palette[idx], linewidth=1.8)
+            ax.fill_between(range(n_samples), df[col], alpha=0.08, color=palette[idx])
+
+        tick_step = max(1, n_samples // 10)
+        ax.set_xticks(range(0, n_samples, tick_step))
+        ax.set_xticklabels(x_labels[::tick_step], rotation=30, ha="right", fontsize=8, color="#c9d1d9")
+        ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+        ax.set_ylim(0, 105)
+
+        ax.set_title("CPU Utilization per Core", fontsize=15, fontweight="bold", color="#e6edf3", pad=14)
+        ax.set_xlabel("Time", fontsize=11, color="#8b949e", labelpad=8)
+        ax.set_ylabel("Utilization", fontsize=11, color="#8b949e", labelpad=8)
+        ax.tick_params(colors="#8b949e")
+        for spine in ax.spines.values():
+            spine.set_edgecolor("#30363d")
+        ax.grid(color="#30363d", linewidth=0.6, alpha=0.7)
+
+        legend = ax.legend(
+            loc="upper right", fontsize=8, framealpha=0.3,
+            facecolor="#0d1117", edgecolor="#30363d", labelcolor="#c9d1d9",
+            ncol=max(1, len(df.columns) // 8),
+        )
+
+        avg_util = df.mean(axis=1).mean()
+        ax.annotate(
+            f"Mean utilization: {avg_util:.1f}%",
+            xy=(0.01, 0.96), xycoords="axes fraction",
+            fontsize=9, color="#58a6ff",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="#0d1117", alpha=0.6, edgecolor="#30363d"),
+        )
+
+        plt.tight_layout()
         if self._kwargs.get("save_graph") == True:
             filename = os.path.join(os.getcwd(), f"cpu_usage_{int(time.time())}.png")
-            fig.savefig(filename)
+            fig.savefig(filename, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
             print(f"Saved CPU usage graph to {filename}")
         plt.show()
 
-    def _graph_mem_stats(self, mem_stats):
+    def _graph_mem_stats(self, mem_stats, timestamps=None):
+        sns.set_theme(style="darkgrid", palette="muted")
         pct_vals = [float(v.strip("%")) for v in mem_stats]
-        fig, ax = plt.subplots(figsize=(12, 4))
-        ax.plot(range(len(pct_vals)), pct_vals, label="Memory Used %", color="orange")
-        ax.set_title("Memory Usage (%)")
-        ax.set_xlabel("Sample")
-        ax.set_ylabel("% Used")
-        ax.set_ylim(0, 100)
-        ax.legend()
+        n_samples = len(pct_vals)
+
+        if timestamps and len(timestamps) == n_samples:
+            x_labels = [datetime.datetime.fromtimestamp(t).strftime("%H:%M:%S") for t in timestamps]
+        else:
+            x_labels = [str(i) for i in range(n_samples)]
+
+        xs = range(n_samples)
+        fig, ax = plt.subplots(figsize=(14, 4))
+        fig.patch.set_facecolor("#1a1a2e")
+        ax.set_facecolor("#16213e")
+
+        color_used = "#f0883e"
+        ax.plot(xs, pct_vals, color=color_used, linewidth=2.2, label="Memory Used %")
+        ax.fill_between(xs, pct_vals, alpha=0.25, color=color_used)
+
+        ax.axhline(y=80, color="#ff6b6b", linewidth=1.0, linestyle="--", alpha=0.7, label="80% threshold")
+
+        tick_step = max(1, n_samples // 10)
+        ax.set_xticks(range(0, n_samples, tick_step))
+        ax.set_xticklabels(x_labels[::tick_step], rotation=30, ha="right", fontsize=8, color="#c9d1d9")
+        ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+        ax.set_ylim(0, 105)
+
+        ax.set_title("Memory Utilization", fontsize=15, fontweight="bold", color="#e6edf3", pad=14)
+        ax.set_xlabel("Time", fontsize=11, color="#8b949e", labelpad=8)
+        ax.set_ylabel("% Used", fontsize=11, color="#8b949e", labelpad=8)
+        ax.tick_params(colors="#8b949e")
+        for spine in ax.spines.values():
+            spine.set_edgecolor("#30363d")
+        ax.grid(color="#30363d", linewidth=0.6, alpha=0.7)
+
+        ax.legend(
+            loc="upper right", fontsize=9, framealpha=0.3,
+            facecolor="#0d1117", edgecolor="#30363d", labelcolor="#c9d1d9",
+        )
+
+        peak = max(pct_vals)
+        avg = sum(pct_vals) / len(pct_vals)
+        ax.annotate(
+            f"Avg: {avg:.1f}%  |  Peak: {peak:.1f}%",
+            xy=(0.01, 0.92), xycoords="axes fraction",
+            fontsize=9, color="#58a6ff",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="#0d1117", alpha=0.6, edgecolor="#30363d"),
+        )
+
+        plt.tight_layout()
         if self._kwargs.get("save_graph") == True:
             filename = os.path.join(os.getcwd(), f"mem_usage_{int(time.time())}.png")
-            fig.savefig(filename)
+            fig.savefig(filename, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
             print(f"Saved memory usage graph to {filename}")
         plt.show()
 
@@ -116,24 +197,71 @@ class SecMon:
         self._graph_net_data(times, rx_by_iface, tx_by_iface)
 
     def _graph_net_data(self, times, rx_by_iface, tx_by_iface):
-        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
-        x = range(len(times))
-        for iface, rx_vals in rx_by_iface.items():
-            ax1.plot(x, rx_vals, label=iface)
-        ax1.set_title("Network RX (Mbps)")
-        ax1.set_xlabel("Sample")
-        ax1.set_ylabel("Mbps")
-        ax1.legend()
-        for iface, tx_vals in tx_by_iface.items():
-            ax2.plot(x, tx_vals, label=iface)
-        ax2.set_title("Network TX (Mbps)")
-        ax2.set_xlabel("Sample")
-        ax2.set_ylabel("Mbps")
-        ax2.legend()
+        sns.set_theme(style="darkgrid", palette="muted")
+        n_samples = len(times)
+        x_labels = [datetime.datetime.fromtimestamp(t).strftime("%H:%M:%S") for t in times]
+        xs = range(n_samples)
+        ifaces = list(rx_by_iface.keys())
+        palette = sns.color_palette("tab10", n_colors=len(ifaces))
+
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 9), sharex=True)
+        fig.patch.set_facecolor("#1a1a2e")
+
+        _DARK_BG = "#16213e"
+        _GRID = "#30363d"
+        _LABEL = "#8b949e"
+        _TEXT = "#e6edf3"
+        _TICK = "#c9d1d9"
+        _ANNOT = "#58a6ff"
+
+        for ax, data_by_iface, direction, color_offset in [
+            (ax1, rx_by_iface, "Download (RX)", 0),
+            (ax2, tx_by_iface, "Upload (TX)", 0),
+        ]:
+            ax.set_facecolor(_DARK_BG)
+            for idx, iface in enumerate(ifaces):
+                vals = data_by_iface[iface]
+                ax.plot(xs, vals, label=iface, color=palette[idx], linewidth=2.0)
+                ax.fill_between(xs, vals, alpha=0.12, color=palette[idx])
+            ax.set_title(f"Network {direction}", fontsize=13, fontweight="bold", color=_TEXT, pad=10)
+            ax.set_ylabel("Mbps", fontsize=11, color=_LABEL, labelpad=8)
+            ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.2f"))
+            ax.tick_params(colors=_TICK, labelsize=8)
+            for spine in ax.spines.values():
+                spine.set_edgecolor(_GRID)
+            ax.grid(color=_GRID, linewidth=0.6, alpha=0.7)
+            ax.legend(
+                loc="upper right", fontsize=8, framealpha=0.3,
+                facecolor="#0d1117", edgecolor=_GRID, labelcolor=_TICK,
+            )
+
+        tick_step = max(1, n_samples // 10)
+        ax2.set_xticks(range(0, n_samples, tick_step))
+        ax2.set_xticklabels(x_labels[::tick_step], rotation=30, ha="right", fontsize=8, color=_TICK)
+        ax2.set_xlabel("Time", fontsize=11, color=_LABEL, labelpad=8)
+
+        all_rx = [v for vals in rx_by_iface.values() for v in vals]
+        all_tx = [v for vals in tx_by_iface.values() for v in vals]
+        peak_rx = max(all_rx) if all_rx else 0
+        peak_tx = max(all_tx) if all_tx else 0
+        ax1.annotate(
+            f"Peak RX: {peak_rx:.3f} Mbps",
+            xy=(0.01, 0.92), xycoords="axes fraction",
+            fontsize=9, color=_ANNOT,
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="#0d1117", alpha=0.6, edgecolor=_GRID),
+        )
+        ax2.annotate(
+            f"Peak TX: {peak_tx:.3f} Mbps",
+            xy=(0.01, 0.92), xycoords="axes fraction",
+            fontsize=9, color=_ANNOT,
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="#0d1117", alpha=0.6, edgecolor=_GRID),
+        )
+
+        fig.suptitle("Network Throughput by Interface", fontsize=16, fontweight="bold", color=_TEXT, y=1.01)
         plt.tight_layout()
         if self._kwargs.get("save_graph") == True:
             filename = os.path.join(os.getcwd(), f"net_usage_{int(time.time())}.png")
-            fig.savefig(filename)
+            fig.savefig(filename, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
             print(f"Saved network usage graph to {filename}")
         plt.show()
 
@@ -204,7 +332,7 @@ def _build_parser():
     p.add_argument(
         "--duration",
         type=int,
-        default=60,
+        default=20,
         metavar="SECS",
         help="Total monitoring duration in seconds (default: 60)",
     )
@@ -221,7 +349,7 @@ def _build_parser():
     p.add_argument(
         "--duration",
         type=int,
-        default=60,
+        default=20,
         metavar="SECS",
         help="Total monitoring duration in seconds (default: 60)",
     )
