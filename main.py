@@ -334,7 +334,7 @@ def _build_parser():
         type=int,
         default=20,
         metavar="SECS",
-        help="Total monitoring duration in seconds (default: 60)",
+        help="Total monitoring duration in seconds (default: 20)",
     )
 
     # --- graph-net ---
@@ -351,7 +351,7 @@ def _build_parser():
         type=int,
         default=20,
         metavar="SECS",
-        help="Total monitoring duration in seconds (default: 60)",
+        help="Total monitoring duration in seconds (default: 20)",
     )
 
     # --- pcap ---
