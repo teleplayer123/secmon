@@ -274,7 +274,7 @@ class SecMon:
 
 def _build_parser():
     parser = argparse.ArgumentParser(
-        prog="sec_mon",
+        prog="secmon",
         description="Security monitoring tool for device, network, and file analysis.",
     )
     parser.add_argument(
