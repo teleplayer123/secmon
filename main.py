@@ -42,7 +42,7 @@ class SecMon:
         self.sec_info = SecMonInfo()
         self._kwargs = kwargs
 
-    def get_device_stats(self, block_interval=5, duration=60):
+    def get_device_stats(self, block_interval=5, duration=20):
         device_stats = {}
         end_time = time.time() + duration
         while time.time() < end_time:
@@ -95,7 +95,7 @@ class SecMon:
             print(f"Saved memory usage graph to {filename}")
         plt.show()
 
-    def get_net_stats(self, block_interval=5, duration=60):
+    def get_net_stats(self, block_interval=5, duration=20):
         net = NetworkUsage()
         net_usage = {}
         end_time = time.time() + duration
@@ -104,7 +104,7 @@ class SecMon:
             net_usage[int(time.time())] = usage
         return net_usage
 
-    def graph_net_stats(self, block_interval=5, duration=60):
+    def graph_net_stats(self, block_interval=5, duration=20):
         net_usage = self.get_net_stats(block_interval=block_interval, duration=duration)
         times = list(net_usage.keys())
         if not times:
