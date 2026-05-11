@@ -6,11 +6,15 @@ import json
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import os
+import platform
 import pandas as pd
 import psutil
 import seaborn as sns
 import sys
 import time
+
+if platform.system() == "Darwin":
+    from platforms.macos import MacOSAppFinder, MacOSResourceAnalyzer
 
 class SecMonInfo:
 
@@ -358,6 +362,28 @@ def _build_parser():
     p = sub.add_parser("pcap", help="Extract payload data from a .pcap file")
     p.add_argument("file", help="Path to the .pcap file")
 
+    # --- macos-apps ---
+    if platform.system() == "Darwin":
+        p = sub.add_parser("macos-apps", help="Discover installed macOS programs and their resource usage")
+        p.add_argument(
+            "--source",
+            default="all",
+            choices=["all", "bundles", "mas", "system-packages", "cli-tools"],
+            metavar="SRC",
+            help="Which program source to query (default: all). "
+                 "Choices: all bundles mas system-packages cli-tools",
+        )
+        p.add_argument(
+            "--pkgutil-details",
+            action="store_true",
+            help="Fetch version and install path per system package (slow)",
+        )
+        p.add_argument(
+            "--resources",
+            action="store_true",
+            help="Include CPU/memory/IO/network stats for currently running apps",
+        )
+
     return parser
 
 
@@ -404,6 +430,32 @@ def main():
         except ValueError as e:
             print(f"error: {e}", file=sys.stderr)
             sys.exit(1)
+
+    elif args.command == "macos-apps":
+        finder = MacOSAppFinder()
+        discovered = finder.find_all(pkgutil_details=args.pkgutil_details)
+
+        if args.source == "all":
+            programs = (
+                discovered["app_bundles"]
+                + discovered["mas_apps"]
+                + discovered["system_packages"]
+                + discovered["cli_tools"]
+            )
+        elif args.source == "bundles":
+            programs = discovered["app_bundles"]
+        elif args.source == "mas":
+            programs = discovered["mas_apps"]
+        elif args.source == "system-packages":
+            programs = discovered["system_packages"]
+        elif args.source == "cli-tools":
+            programs = discovered["cli_tools"]
+
+        if args.resources:
+            analyzer = MacOSResourceAnalyzer()
+            programs = analyzer.analyze_installed_apps(programs)
+
+        print(json.dumps(programs, indent=2))
 
 
 if __name__ == "__main__":
